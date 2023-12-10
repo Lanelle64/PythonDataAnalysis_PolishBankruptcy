@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Prediction</title>
+</head>
+<body>
+    <h1>Machine Learning Prediction</h1>
+    
+    <div>
+        <label for="inputData">Input Data:</label>
+        <textarea id="inputData" rows="4" cols="50"></textarea>
+        <button onclick="predict()">Predict</button>
+    </div>
+
+    <div id="predictionResult">
+        <!-- The prediction result will be displayed here -->
+    </div>
+
+    <script>
+        function predict() {
+            // Get the input data from the textarea
+            var inputData = document.getElementById('inputData').value;
+
+            // Make an AJAX request to the Flask API to get the prediction
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/predict", true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Parse the response JSON
+                    var prediction = JSON.parse(xhr.responseText);
+
+                    // Display the prediction result
+                    var resultElement = document.getElementById('predictionResult');
+                    if (prediction.prediction[0] === 1) {
+                        resultElement.innerHTML = '<p>Prediction Result: 1</p><p>We predict the company will be bankrupt in 1 year.</p>';
+                    } else {
+                        resultElement.innerHTML = '<p>Prediction Result: 0</p><p>We predict the company will still be working in 1 year.</p>';
+                    }
+                }
+            };
+
+            // Send the input data to the Flask API
+            xhr.send(JSON.stringify({ "input_data": inputData }));
+        }
+    </script>
+</body>
+</html>
